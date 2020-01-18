@@ -8,33 +8,33 @@ from std_msgs.msg import Header
 
 sensor = BMP280(0x77)
 
+
 def publisher():
-	pub = rospy.Publisher('rov/bmp280', bmp280_data, queue_size=3)
-	rospy.init_node('bmp280')
-	rate = rospy.Rate(3) #3Hz data read
-	
-	while not rospy.is_shutdown():
-		msg = bmp280_data()
-		header = Header()
+    pub = rospy.Publisher('rov/bmp280', bmp280_data, queue_size=3)
+    rospy.init_node('bmp280')
+    rate = rospy.Rate(3)  # 3Hz data read
 
-		sensor.updateValues()
+    while not rospy.is_shutdown():
+        msg = bmp280_data()
 
-		msg.tempC = sensor.getTempuratureC()
-		msg.pressureP = sensor.getPressureP()
-		msg.pressureA = sensor.getPressureA()
-		msg.altitudeM = sensor.getAltitudeM()
+        sensor.updateValues()
 
-		#update message headers
-		header.stamp = rospy.Time.now()
-		header.frame_id = 'pressure_data'
-		msg.header = header
+        msg.tempC = sensor.getTempuratureC()
+        msg.pressureP = sensor.getPressureP()
+        msg.pressureA = sensor.getPressureA()
+        msg.altitudeM = sensor.getAltitudeM()
 
-		pub.publish(msg)
+        # update message headers
+        msg.header.stamp = rospy.Time.now()
+        msg.header.frame_id = 'pressure_data'
 
-		rate.sleep()
+        pub.publish(msg)
+
+        rate.sleep()
+
 
 if __name__ == '__main__':
-	try:
-		publisher()
-	except rospy.ROSInterruptException:
-		pass
+    try:
+        publisher()
+    except rospy.ROSInterruptException:
+        pass
